@@ -6,18 +6,63 @@ Establish a repeatable C++ learning loop and understand one rigid transform.
 The goal is not to rush toward SLAM; it is to make every later geometric result
 buildable, testable, and explainable.
 
-## Step 0 — Inspect the repository
+## Step 0 — Build the mental model first
 
-Read, but do not edit yet:
+Do not begin by reading every line alone. Use this four-part model:
 
-1. `CMakeLists.txt`
-2. `app/transform_demo.cpp`
-3. `tests/transform_test.cpp`
+1. A `.cpp` file is human-readable C++ source code; the computer cannot run it
+   directly.
+2. A compiler translates that source into machine code and reports language
+   errors.
+3. CMake reads `CMakeLists.txt` and generates instructions for the actual build
+   tool. CMake is not the compiler.
+4. A test is another executable whose result is interpreted as pass or fail.
 
-Answer the three "Before running" questions in `LEARNING_LOG.md`.
+Now inspect the repository with the following guide.
 
-Success criterion: you can point to the executable target, its dependency, and
-the test registration in `CMakeLists.txt`.
+### `CMakeLists.txt`
+
+- `project(... LANGUAGES CXX)` declares a C++ project.
+- `set(CMAKE_CXX_STANDARD 17)` requests the C++17 language standard.
+- `find_package(Eigen3 ...)` asks the system to locate Eigen rather than copying
+  it into this repository.
+- `add_executable(transform_demo ...)` says which source file becomes the demo
+  program.
+- `target_link_libraries(... Eigen3::Eigen)` gives that program access to Eigen.
+- `enable_testing()`, the second executable, and `add_test(...)` register a
+  program that CTest can run as a check.
+
+### `app/transform_demo.cpp`
+
+The program creates:
+
+- a 90-degree rotation around the z axis;
+- a translation `(1, 2, 0)`;
+- a point `(1, 0, 0)`.
+
+Under the convention used by the sample, rotation is applied first and
+translation second:
+
+```text
+(1, 0, 0) --rotate 90 degrees around z--> (0, 1, 0)
+          --add translation (1, 2, 0)--> (1, 3, 0)
+```
+
+The useful beginner question is not "do I know Eigen syntax by memory?" It is
+"can I state what operation the code represents and predict its result?"
+
+### `tests/transform_test.cpp`
+
+The test applies a transform and then its inverse. If the recovered point is
+not sufficiently close to the original point, it returns a failure code.
+CTest treats exit code zero as pass and a nonzero exit code as fail.
+
+After this guided pass, answer the three "Before running" questions in
+`LEARNING_LOG.md`. Short and uncertain answers are acceptable; they establish a
+baseline for comparison after the program runs.
+
+Success criterion: in plain language, you can distinguish source code,
+compiler, CMake, executable, and test, and predict the demo result `(1, 3, 0)`.
 
 ## Step 1 — Choose the development environment
 
@@ -110,3 +155,9 @@ We review:
 
 Do not start M1 solely because the initial sample compiled.
 
+## GitHub publication checkpoint
+
+The local Git history preserves commit dates even if it is pushed later. Create
+the GitHub repository after M0 builds and tests successfully, then push the
+complete history. This gives the public repository an honest runnable first
+state without losing evidence of the earlier work.
