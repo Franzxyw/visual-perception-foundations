@@ -20,6 +20,8 @@ Exit criteria:
 
 ## M1 — Frames, SO(3), and SE(3)
 
+Status: **in progress from 2026-09-17**
+
 Implement and test frame composition, inverse transforms, rotation
 representations, and convention-safe APIs. Connect the concepts to the IMU
 frame ambiguity observed during the Ingenieurpraxis, without depending on that

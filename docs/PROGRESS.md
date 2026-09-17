@@ -24,6 +24,18 @@ Status: **complete on 2026-09-17**
 - `[x]` Learner added a second transform example and known-answer tests.
 - `[x]` M0 reflection completed in `LEARNING_LOG.md`.
 
+## Current milestone: M1
+
+Status: **in progress from 2026-09-17**
+
+- `[x]` M1 step-by-step plan and repository frame convention documented.
+- `[ ]` M1.0 three-frame composition derived by hand.
+- `[ ]` M1.1 composition demo implemented and verified.
+- `[ ]` M1.2 composition/inverse tests and wrong-order mutation completed.
+- `[ ]` M1.3 repeated checks refactored into table-driven cases.
+- `[ ]` M1.4 matrix/angle-axis/quaternion equivalence verified.
+- `[ ]` M1.5 reflection and checkpoint completed.
+
 ## Evidence log
 
 ### 2026-09-16 — Initial audit

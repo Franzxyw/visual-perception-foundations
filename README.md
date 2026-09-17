@@ -15,8 +15,8 @@ starts.
 - Environment: Ubuntu 24.04 WSL2 with GCC 13.3, CMake 3.28.3, and Eigen 3.4
 - Build verification: demo built and produced the hand-calculated result
   `(1, 3, 0)`; CTest passed 1/1 tests on 2026-09-17
-- Next step: publish the verified history to GitHub, then begin **M1 — frames,
-  SO(3), and SE(3)**
+- Current milestone: **M1 — frames, SO(3), and SE(3)**
+- Next step: complete M1.0 frame-notation reasoning before adding new code
 
 Because the source repository is on a Windows-mounted drive, generated build
 files live in the Linux filesystem:
