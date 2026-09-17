@@ -64,6 +64,19 @@ show what we should revisit.
   intended CTest failure and diagnostic. Restoring `(0, 2, 0)`, rebuilding, and
   rerunning CTest returned to 1/1 tests passed.
 
+### M0 checkpoint answers
+
+- Why did changing a C++ output string require build but not configure?
+  - The project structure, source list, dependencies, libraries, and
+    `CMakeLists.txt` did not change. The existing build graph remained valid, so
+    only the modified source needed to be recompiled and relinked.
+- Can `point_b = transform * point_a` alone tell us whether the operation is an
+  active transformation or a passive coordinate change?
+  - No. The expression does not say whether the physical point moves in a fixed
+    frame or the same point is being represented in a different coordinate
+    frame. We need an explicit frame convention, transform direction, variable
+    naming, and physical interpretation.
+
 ## Concept follow-up from review
 
 ### How much CMake should I learn?

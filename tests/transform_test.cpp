@@ -55,7 +55,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    std::cout << "transform inverse check passed\n";
+    std::cout << "all transform checks passed\n";
     return EXIT_SUCCESS;
 }
 

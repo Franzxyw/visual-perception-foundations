@@ -10,6 +10,8 @@ Last updated: 2026-09-17
 
 ## Current milestone: M0
 
+Status: **complete on 2026-09-17**
+
 - `[x]` Local Git repository created on branch `main`.
 - `[x]` Learning roadmap and progress-check structure created.
 - `[x]` Initial concept answers reviewed and supplemented in `LEARNING_LOG.md`.
@@ -20,7 +22,7 @@ Last updated: 2026-09-17
 - `[x]` `transform_demo` output checked against a hand calculation.
 - `[x]` CTest passes 1/1 registered tests.
 - `[x]` Learner added a second transform example and known-answer tests.
-- `[ ]` M0 reflection completed in `LEARNING_LOG.md`.
+- `[x]` M0 reflection completed in `LEARNING_LOG.md`.
 
 ## Evidence log
 
@@ -48,6 +50,9 @@ Last updated: 2026-09-17
 - Mutation check: changing the second expected point from `(0, 2, 0)` to
   `(0, 3, 0)` caused the intended failure; restoring it returned CTest to 1/1
   passing.
+- Final checkpoint: changing only a C++ output string triggered an incremental
+  rebuild of `transform_test`; the direct executable printed
+  `all transform checks passed`, and CTest remained 1/1 passing.
 
 ## Checkpoint rule
 

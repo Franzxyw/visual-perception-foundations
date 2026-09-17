@@ -10,12 +10,13 @@ starts.
 
 ## Current status
 
-- Current milestone: **M0 — toolchain and first Eigen program**
+- Completed milestone: **M0 — toolchain and first Eigen program** (2026-09-17)
 - Repository scaffold: created
 - Environment: Ubuntu 24.04 WSL2 with GCC 13.3, CMake 3.28.3, and Eigen 3.4
 - Build verification: demo built and produced the hand-calculated result
   `(1, 3, 0)`; CTest passed 1/1 tests on 2026-09-17
-- Next step: finish the M0 frame-semantics reflection and checkpoint before M1
+- Next step: publish the verified history to GitHub, then begin **M1 — frames,
+  SO(3), and SE(3)**
 
 Because the source repository is on a Windows-mounted drive, generated build
 files live in the Linux filesystem:

@@ -5,6 +5,8 @@ only when its exit criteria have evidence in `PROGRESS.md`.
 
 ## M0 — Toolchain, CMake, Eigen, tests
 
+Status: **completed 2026-09-17**
+
 Learn the compile/link/test loop and use Eigen to apply and invert a rigid
 transform. Keep the program deliberately small.
 
@@ -52,4 +54,3 @@ Choose based on the real thesis/initial-project opportunity:
 
 ROS 2, CUDA, TensorRT, and full SLAM frameworks are intentionally deferred
 until a milestone creates a concrete need for them.
-
