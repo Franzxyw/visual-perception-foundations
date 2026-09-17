@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-09-16
+Last updated: 2026-09-17
 
 ## Status legend
 
@@ -12,6 +12,7 @@ Last updated: 2026-09-16
 
 - `[x]` Local Git repository created on branch `main`.
 - `[x]` Learning roadmap and progress-check structure created.
+- `[x]` Initial concept answers reviewed and supplemented in `LEARNING_LOG.md`.
 - `[~]` Minimal CMake/Eigen demo and executable test written.
 - `[ ]` Development toolchain selected and installed.
 - `[ ]` CMake configure succeeds from a fresh terminal.
@@ -39,4 +40,3 @@ At each checkpoint, record:
 2. important output or error;
 3. what the result proves;
 4. the next smallest step.
-
