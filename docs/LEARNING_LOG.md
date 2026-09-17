@@ -140,3 +140,29 @@ problem in this simple rigid-transform example.
 The learner answer "rounding error" is correct. Many real values cannot be
 represented exactly in binary floating point, and arithmetic accumulates small
 errors, so numerical code compares against an explicit tolerance.
+
+## M1 reflection
+
+### M1.0 frame notation
+
+- What are the input and output frames of `T_BA`?
+  - Learner answer: Input frame A; output frame B.
+  - Review: correct. Under this repository's convention,
+    `p_B = T_BA * p_A`.
+- Why must `t_BA` be expressed in frame B?
+  - Learner answer: Because the translation happens after the rotation into
+    frame B.
+  - Review: the operational intuition is correct for `R_BA * p_A + t_BA`. The
+    more fundamental reason is that `R_BA * p_A` is already expressed using
+    frame B's basis, and vector addition is meaningful only when `t_BA` uses
+    that same basis.
+- Why is `T_CA = T_CB * T_BA`?
+  - Learner answer: The two transformations share the intermediate frame B.
+  - Review: correct. `T_BA` first maps A to B, then `T_CB` maps B to C; the
+    adjacent B labels connect and the resulting mapping is A to C.
+- What is semantically broken in `T_BA * T_CB * p_A`?
+  - Learner answer: There is no shared intermediate frame between the two
+    transformations.
+  - Review: correct. With right-to-left application, `T_CB` would first receive
+    `p_A`, although it expects B-frame coordinates. Equivalently, the C output
+    of `T_CB` does not match the A input expected by `T_BA`.

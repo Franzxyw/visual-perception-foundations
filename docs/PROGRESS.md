@@ -29,7 +29,7 @@ Status: **complete on 2026-09-17**
 Status: **in progress from 2026-09-17**
 
 - `[x]` M1 step-by-step plan and repository frame convention documented.
-- `[ ]` M1.0 three-frame composition derived by hand.
+- `[x]` M1.0 three-frame composition derived by hand and reviewed.
 - `[ ]` M1.1 composition demo implemented and verified.
 - `[ ]` M1.2 composition/inverse tests and wrong-order mutation completed.
 - `[ ]` M1.3 repeated checks refactored into table-driven cases.
