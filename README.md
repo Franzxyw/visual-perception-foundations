@@ -12,10 +12,20 @@ starts.
 
 - Current milestone: **M0 — toolchain and first Eigen program**
 - Repository scaffold: created
-- Build verification: **not run yet** (no C++ compiler/CMake was found on the
-  current Windows PATH, and no Ubuntu WSL distribution is installed)
-- Next decision: choose and install the development environment described in
-  [M0](docs/milestones/M0-toolchain-and-eigen.md)
+- Environment: Ubuntu 24.04 WSL2 with GCC 13.3, CMake 3.28.3, and Eigen 3.4
+- Build verification: demo built and produced the hand-calculated result
+  `(1, 3, 0)`; CTest passed 1/1 tests on 2026-09-17
+- Next step: complete one learner-authored transform change and test before M1
+
+Because the source repository is on a Windows-mounted drive, generated build
+files live in the Linux filesystem:
+
+```bash
+cmake -S . -B ~/build/visual-perception-foundations
+cmake --build ~/build/visual-perception-foundations
+~/build/visual-perception-foundations/transform_demo
+ctest --test-dir ~/build/visual-perception-foundations --output-on-failure
+```
 
 ## Repository map
 
@@ -40,4 +50,3 @@ For every step:
 
 The repository should not claim that something works merely because the files
 exist. "Written", "built", "tested", and "understood" are separate states.
-

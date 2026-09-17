@@ -66,10 +66,9 @@ compiler, CMake, executable, and test, and predict the demo result `(1, 3, 0)`.
 
 ## Step 1 — Choose the development environment
 
-Current evidence shows no usable compiler/CMake on Windows and no Ubuntu WSL.
-The recommended next action is to install an Ubuntu WSL distribution and keep
-the learning toolchain there. Do not install packages until we review the exact
-commands together.
+Ubuntu 24.04 WSL2 is the selected development environment. It is stored on the
+D drive and provides GCC/G++, CMake, Git, and Eigen without modifying the Aoki
+project environments.
 
 Why WSL Ubuntu is the default recommendation:
 
@@ -96,16 +95,19 @@ headers into this repository.
 
 ## Step 3 — Configure
 
-From the repository root, the intended command is:
+The source repository is on the Windows-mounted D drive. CMake cannot reliably
+apply Linux permission metadata to a build directory there, so generated build
+files belong in the Linux filesystem. From the repository root, use:
 
 ```bash
-cmake -S . -B build
+cmake -S . -B ~/build/visual-perception-foundations
 ```
 
 Meaning:
 
 - `-S .` selects the current directory as the source tree;
-- `-B build` keeps generated build files in a separate directory.
+- `-B ~/build/visual-perception-foundations` keeps generated build files in a
+  separate Linux-native directory.
 
 Success criterion: CMake finishes with "Configuring done" and "Generating
 done". Record the compiler CMake selected.
@@ -113,7 +115,7 @@ done". Record the compiler CMake selected.
 ## Step 4 — Build
 
 ```bash
-cmake --build build
+cmake --build ~/build/visual-perception-foundations
 ```
 
 Success criterion: both `transform_demo` and `transform_test` are built. If the
@@ -121,8 +123,11 @@ build fails, preserve the first meaningful compiler error before changing code.
 
 ## Step 5 — Predict, then run
 
-Before execution, calculate the expected transformed point by hand. Then run
-the program from the build directory and compare.
+Before execution, calculate the expected transformed point by hand. Then run:
+
+```bash
+~/build/visual-perception-foundations/transform_demo
+```
 
 Success criterion: the numerical result agrees with your calculation, and you
 can explain whether rotation or translation is applied first by this expression.
@@ -130,7 +135,7 @@ can explain whether rotation or translation is applied first by this expression.
 ## Step 6 — Test
 
 ```bash
-ctest --test-dir build --output-on-failure
+ctest --test-dir ~/build/visual-perception-foundations --output-on-failure
 ```
 
 Success criterion: the inverse-transform test passes, and you can explain why
