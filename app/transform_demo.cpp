@@ -16,9 +16,15 @@ int main() {
 
     const Eigen::Vector3d point_a(1.0, 0.0, 0.0);
     const Eigen::Vector3d point_b = transform * point_a;
+    const Eigen::Vector3d second_point_a(0.0, 1.0, 0.0);
+    const Eigen::Vector3d second_point_b = transform * second_point_a;
 
     std::cout << "point in frame A: " << point_a.transpose() << '\n';
     std::cout << "point in frame B: " << point_b.transpose() << '\n';
+    std::cout << "second point in frame A: "
+              << second_point_a.transpose() << "\n";
+    std::cout << "second point in frame B: "
+              << second_point_b.transpose() << "\n";
     return 0;
 }
 

@@ -27,6 +27,34 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    constexpr double kPi = 3.14159265358979323846;
+
+    Eigen::Isometry3d rotation_translation = Eigen::Isometry3d::Identity();
+    rotation_translation.linear() =
+        Eigen::AngleAxisd(
+            kPi / 2.0,
+            Eigen::Vector3d::UnitZ()
+        ).toRotationMatrix();
+    rotation_translation.translation() = Eigen::Vector3d(1.0, 2.0, 0.0);
+
+    const Eigen::Vector3d first_input(1.0, 0.0, 0.0);
+    const Eigen::Vector3d first_expected(1.0, 3.0, 0.0);
+    const Eigen::Vector3d first_actual = rotation_translation * first_input;
+
+    if (!isApprox(first_actual, first_expected)) {
+        std::cerr << "first transformed point was incorrect\n";
+        return EXIT_FAILURE;
+    }
+
+    const Eigen::Vector3d second_input(0.0, 1.0, 0.0);
+    const Eigen::Vector3d second_expected(0.0, 2.0, 0.0);
+    const Eigen::Vector3d second_actual = rotation_translation * second_input;
+
+    if (!isApprox(second_actual, second_expected)) {
+        std::cerr << "second transformed point was incorrect\n";
+        return EXIT_FAILURE;
+    }
+
     std::cout << "transform inverse check passed\n";
     return EXIT_SUCCESS;
 }

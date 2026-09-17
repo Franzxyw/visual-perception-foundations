@@ -50,13 +50,19 @@ show what we should revisit.
 
 ### Learner-authored change
 
-- Change made:
-- Prediction:
-- Observed result:
-- Explanation:
-
-Not attempted yet. Complete this only after the project can be built and the
-baseline test has been run; do not invent an observed result.
+- Change made: Added a second input point (0, 1, 0).
+- Prediction: After rotation and translation, it should become (0, 2, 0).
+- Observed result: The demo printed `second point in frame B: 0 2 0`, matching
+  the prediction.
+- Explanation: A positive 90-degree rotation around z maps `(0, 1, 0)` to
+  `(-1, 0, 0)`. Adding translation `(1, 2, 0)` then produces `(0, 2, 0)`.
+  Only `transform_demo.cpp` changed, so the existing build graph was still
+  valid. The incremental build recompiled and relinked `transform_demo` but did
+  not need to rebuild `transform_test`.
+- Test coverage: Added known-answer checks for both transformed points. A
+  temporary mutation from expected `(0, 2, 0)` to `(0, 3, 0)` produced the
+  intended CTest failure and diagnostic. Restoring `(0, 2, 0)`, rebuilding, and
+  rerunning CTest returned to 1/1 tests passed.
 
 ## Concept follow-up from review
 

@@ -19,7 +19,7 @@ Last updated: 2026-09-17
 - `[x]` Project builds without warnings/errors.
 - `[x]` `transform_demo` output checked against a hand calculation.
 - `[x]` CTest passes 1/1 registered tests.
-- `[ ]` Learner changes the transform or test and explains why.
+- `[x]` Learner added a second transform example and known-answer tests.
 - `[ ]` M0 reflection completed in `LEARNING_LOG.md`.
 
 ## Evidence log
@@ -45,6 +45,9 @@ Last updated: 2026-09-17
 - `transform_demo` printed `(1, 0, 0)` and `(1, 3, 0)`, matching the hand
   calculation.
 - CTest result: `100% tests passed, 0 tests failed out of 1`.
+- Mutation check: changing the second expected point from `(0, 2, 0)` to
+  `(0, 3, 0)` caused the intended failure; restoring it returned CTest to 1/1
+  passing.
 
 ## Checkpoint rule
 
