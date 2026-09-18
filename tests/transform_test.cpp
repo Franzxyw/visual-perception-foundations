@@ -1,6 +1,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <array>
 #include <cstdlib>
 #include <iostream>
 
@@ -11,6 +12,12 @@ bool isApprox(const Eigen::Vector3d& actual,
               double tolerance = 1e-12) {
     return (actual - expected).norm() < tolerance;
 }
+
+struct TransformCase {
+    const char* name;
+    Eigen::Vector3d input;
+    Eigen::Vector3d expected;
+};
 
 }  // namespace
 
@@ -37,25 +44,28 @@ int main() {
         ).toRotationMatrix();
     rotation_translation.translation() = Eigen::Vector3d(1.0, 2.0, 0.0);
 
-    const Eigen::Vector3d first_input(1.0, 0.0, 0.0);
-    const Eigen::Vector3d first_expected(1.0, 3.0, 0.0);
-    const Eigen::Vector3d first_actual = rotation_translation * first_input;
+    const std::array<TransformCase, 2> cases{{
+        {
+            "x-axis point",
+            Eigen::Vector3d(1.0, 0.0, 0.0),
+            Eigen::Vector3d(1.0, 3.0, 0.0)
+        },
+        {
+            "y-axis point",
+            Eigen::Vector3d(0.0, 1.0, 0.0),
+            Eigen::Vector3d(0.0, 2.0, 0.0)
+        },
+    }};
 
-    if (!isApprox(first_actual, first_expected)) {
-        std::cerr << "first transformed point was incorrect\n";
-        return EXIT_FAILURE;
-    }
+    for (const auto& test_case : cases) {
+        const Eigen::Vector3d actual = rotation_translation * test_case.input;
 
-    const Eigen::Vector3d second_input(0.0, 1.0, 0.0);
-    const Eigen::Vector3d second_expected(0.0, 2.0, 0.0);
-    const Eigen::Vector3d second_actual = rotation_translation * second_input;
-
-    if (!isApprox(second_actual, second_expected)) {
-        std::cerr << "second transformed point was incorrect\n";
-        return EXIT_FAILURE;
+        if (!isApprox(actual, test_case.expected)) {
+            std::cerr << test_case.name << " was transformed incorrectly\n";
+            return EXIT_FAILURE;
+        }
     }
 
     std::cout << "all transform checks passed\n";
     return EXIT_SUCCESS;
 }
-

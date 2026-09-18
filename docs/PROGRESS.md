@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-09-17
+Last updated: 2026-09-18
 
 ## Status legend
 
@@ -26,15 +26,15 @@ Status: **complete on 2026-09-17**
 
 ## Current milestone: M1
 
-Status: **in progress from 2026-09-17**
+Status: **complete on 2026-09-18**
 
 - `[x]` M1 step-by-step plan and repository frame convention documented.
 - `[x]` M1.0 three-frame composition derived by hand and reviewed.
-- `[ ]` M1.1 composition demo implemented and verified.
-- `[ ]` M1.2 composition/inverse tests and wrong-order mutation completed.
-- `[ ]` M1.3 repeated checks refactored into table-driven cases.
-- `[ ]` M1.4 matrix/angle-axis/quaternion equivalence verified.
-- `[ ]` M1.5 reflection and checkpoint completed.
+- `[x]` M1.1 composition demo implemented and verified.
+- `[x]` M1.2 composition/inverse/identity tests and wrong-order mutation completed.
+- `[x]` M1.3 repeated checks refactored into table-driven cases.
+- `[x]` M1.4 matrix/angle-axis/quaternion equivalence verified.
+- `[x]` M1.5 reflection completed and learner answers reviewed.
 
 ## Evidence log
 
@@ -65,6 +65,35 @@ Status: **in progress from 2026-09-17**
 - Final checkpoint: changing only a C++ output string triggered an incremental
   rebuild of `transform_test`; the direct executable printed
   `all transform checks passed`, and CTest remained 1/1 passing.
+
+### 2026-09-18 — M1 frames and rotation evidence
+
+- `frame_composition_demo` produced `p_B = (1, 1, 0)` and matching sequential
+  and composed `p_C = (-1, 3, 0)` results.
+- Composition tests cover the known answer, sequential/composed equivalence,
+  inverse recovery, and correctly labelled left/right identity composition.
+- Reversing the order to `T_BA * T_CB` caused the intended composition-test
+  failure; restoring `T_CB * T_BA` returned CTest to 2/2 passing.
+- Repeated point cases in `transform_test` were replaced by a named
+  `std::array` of test-case structs and a range-based loop. Mutating the
+  y-axis expected result produced the intended named failure; after restoring
+  it, the later full CTest run passed.
+- Shared rigid-transform construction was extracted to the header-only
+  `visual_perception_core` interface target and consumed by both the demo and
+  composition test.
+- The rotation-representation demo showed equivalent matrix, angle-axis, and
+  quaternion results for a +90-degree z rotation. The quaternion printed as
+  approximately `(w, x, y, z) = (0.707107, 0, 0, 0.707107)`.
+- `rotation_representations_test` verifies equivalent matrices and transformed
+  vectors, quaternion double cover (`q` and `-q`), normalization, and the
+  half-angle coefficients.
+- Final observed CTest result before the reflection: `100% tests passed,
+  0 tests failed out of 3`.
+- The learner completed the M1 checkpoint explanations covering transform
+  direction and inverse recovery, composition order, active/passive ambiguity,
+  frame mismatches hidden by shared numeric types or identity matrices,
+  quaternion unit norm and half angles, double cover, and composition versus
+  coefficient scaling.
 
 ## Checkpoint rule
 

@@ -12,8 +12,24 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 
+add_library(visual_perception_core INTERFACE)
+target_include_directories(
+    visual_perception_core
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(visual_perception_core INTERFACE Eigen3::Eigen)
+
 add_executable(transform_demo app/transform_demo.cpp)
 target_link_libraries(transform_demo PRIVATE Eigen3::Eigen)
+
+add_executable(frame_composition_demo app/frame_composition_demo.cpp)
+target_link_libraries(frame_composition_demo PRIVATE visual_perception_core)
+
+add_executable(
+    rotation_representations_demo
+    app/rotation_representations_demo.cpp
+)
+target_link_libraries(rotation_representations_demo PRIVATE Eigen3::Eigen)
 
 enable_testing()
 
@@ -21,3 +37,16 @@ add_executable(transform_test tests/transform_test.cpp)
 target_link_libraries(transform_test PRIVATE Eigen3::Eigen)
 add_test(NAME transform_test COMMAND transform_test)
 
+add_executable(frame_composition_test tests/frame_composition_test.cpp)
+target_link_libraries(frame_composition_test PRIVATE visual_perception_core)
+add_test(NAME frame_composition_test COMMAND frame_composition_test)
+
+add_executable(
+    rotation_representations_test
+    tests/rotation_representations_test.cpp
+)
+target_link_libraries(rotation_representations_test PRIVATE Eigen3::Eigen)
+add_test(
+    NAME rotation_representations_test
+    COMMAND rotation_representations_test
+)

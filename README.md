@@ -10,13 +10,14 @@ starts.
 
 ## Current status
 
-- Completed milestone: **M0 — toolchain and first Eigen program** (2026-09-17)
+- Completed milestones: **M0 — toolchain and first Eigen program**
+  (2026-09-17) and **M1 — frames, SO(3), and SE(3)** (2026-09-18)
 - Repository scaffold: created
 - Environment: Ubuntu 24.04 WSL2 with GCC 13.3, CMake 3.28.3, and Eigen 3.4
-- Build verification: demo built and produced the hand-calculated result
-  `(1, 3, 0)`; CTest passed 1/1 tests on 2026-09-17
-- Current milestone: **M1 — frames, SO(3), and SE(3)**
-- Next step: complete M1.0 frame-notation reasoning before adding new code
+- Build verification: the transform, frame-composition, and rotation examples
+  were checked against hand calculations; CTest passed 3/3 tests on 2026-09-18
+- Next main milestone: **M2 — pinhole camera and calibration**
+- Parallel track: **ML0 — rebuild PyTorch and learning foundations**
 
 Because the source repository is on a Windows-mounted drive, generated build
 files live in the Linux filesystem:
@@ -37,6 +38,7 @@ docs/ROADMAP.md      milestone sequence and scope
 docs/PROGRESS.md     source of truth for current progress
 docs/LEARNING_LOG.md short reflections written by the learner
 docs/milestones/     step-by-step plan for each active milestone
+docs/notes/          reusable concept notes and reference material
 ```
 
 ## Working agreement
