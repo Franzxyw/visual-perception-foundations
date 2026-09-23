@@ -243,3 +243,145 @@ are enough; Chinese or English is acceptable.
      rotation quaternion until normalized; `q * q` composes the rotation with
      itself and therefore accumulates the rotation angle according to the same
      axis and convention.
+
+## M2 reflection
+
+### M2.0 projection reasoning
+
+Use the camera and point defined in
+`docs/milestones/M2-pinhole-camera-and-calibration.md`, then answer before
+writing the projection code:
+
+1. What are `(x_n, y_n)` and `(u, v)`?
+   - Learner answer: `(x_n, y_n) = (0.25, -0.1)` and
+     `(u, v) = (420 px, 282 px)`.
+   - Review: the normalized coordinates and `u` are correct. For `v`,
+     `420 * (-0.1) + 240 = 198`, so the correct pixel is `(420, 198)`.
+     Because image `v` grows downward, negative normalized `y` places the
+     pixel above the principal point.
+2. Why does `3 * p_C` project to the same pixel?
+   - Learner answer: `p_C` only provides direction information, so scaling it
+     does not affect the projected pixel.
+   - Review: correct. The common scale cancels in `X / Z` and `Y / Z`.
+3. Which quantities in the equations use metres, pixels, or no units?
+   - Learner answer: the components of `p_C` use metres; focal lengths and the
+     principal point use pixels; normalized `x` and `y` are dimensionless.
+   - Review: correct for the convention used in this milestone.
+4. Why should the first API reject `Z <= 0`?
+   - Learner answer: `Z = 0` would put zero in the denominator, while `Z < 0`
+     describes a point behind the camera and does not make physical sense as a
+     visible pinhole-camera measurement.
+   - Review: correct. Later APIs may distinguish invalid projection from an
+     off-image but geometrically valid point with positive depth.
+
+### M2.3 back-projection reasoning
+
+Use the same camera intrinsics and pixel `(u, v) = (420, 198)`:
+
+1. What normalized camera ray `(x_n, y_n, 1)` corresponds to the pixel?
+   - Learner answer: `(0.25, -0.1, 1)`.
+   - Review: correct. This ray uses the normalized-plane convention `Z = 1`
+     and is not normalized to Euclidean length one.
+2. Why does this pixel correspond to infinitely many 3D points rather than one
+   unique point?
+   - Learner answer: going from 2D back to 3D requires another degree of
+     freedom, so the result is a ray.
+   - Review: correct. Every positive scalar multiple of the ray projects to the
+     same ideal pixel.
+3. If the z-depth is `Z = 4 m`, what is the recovered camera-frame point?
+   - Learner answer: `(1 m, -0.4 m, 4 m)`.
+   - Review: correct: multiply the normalized ray by the requested z-depth.
+4. Why is z-depth different from Euclidean distance from the camera center?
+   - Learner answer: the point is not necessarily on the principal optical
+     axis, so Euclidean distance also includes its X and Y components.
+   - Review: correct. They are equal only when `X = Y = 0` with positive Z.
+
+### M2.4 intrinsics and extrinsics reasoning
+
+Use the existing camera intrinsics and:
+
+```text
+p_W = (1, 0, 4)
+
+T_CW:
+  rotate +90 degrees around z
+  then translate by (0.5, -0.5, 1), expressed in C
+```
+
+1. What is the camera-frame point `p_C = T_CW * p_W`?
+   - Learner answer: `(0.5, 0.5, 5)`.
+   - Review: correct. Rotation produces `(0, 1, 4)` and the C-frame
+     translation then produces `(0.5, 0.5, 5)`.
+2. What pixel does `p_C` project to?
+   - Learner answer: `(360, 280)`.
+   - Review: `u = 400 * (0.5 / 5) + 320 = 360` is correct. The vertical
+     coordinate is `v = 420 * (0.5 / 5) + 240 = 282`, so the corrected pixel
+     is `(360, 282)`.
+3. Why is the required transform `T_CW` rather than `T_WC`?
+   - Learner answer: because `T_CW` maps W to C.
+   - Review: correct. The projection function consumes camera-frame
+     coordinates, so the world-frame point must first be mapped from W to C.
+4. What is the conceptual difference between the extrinsic transform and the
+   intrinsic camera parameters?
+   - Learner answer: not yet known; the concept had not been explained in
+     enough detail before the question.
+   - Review: extrinsics describe the spatial relationship between the camera
+     and an external frame and map the point into camera coordinates.
+     Intrinsics describe the camera's internal ideal projection geometry and
+     map a camera-frame ray to pixel coordinates.
+
+### M2.5 radial-distortion reasoning
+
+For normalized coordinates `(x_n, y_n)`, begin with one radial coefficient:
+
+```text
+r^2 = x_n^2 + y_n^2
+scale = 1 + k_1 * r^2
+x_d = x_n * scale
+y_d = y_n * scale
+```
+
+Use `(x_n, y_n) = (0.5, 0)`, `k_1 = -0.2`, and the existing intrinsics:
+
+1. What are `r^2`, `scale`, and the distorted normalized coordinates
+   `(x_d, y_d)`?
+   - Earlier calculation and demo result: `r^2 = 0.5^2 + 0^2 = 0.25`,
+     `scale = 1 + (-0.2) * 0.25 = 0.95`, and
+     `(x_d, y_d) = (0.475, 0)`.
+2. What are the undistorted and distorted pixels?
+   - Earlier demo result: ideal pixel `(520, 240)`; distorted pixel
+     `(510, 240)`.
+3. Does this negative `k_1` move the point toward or away from the principal
+   point?
+   - Learner answer: toward the principal point, because
+     `scale = 1 + k_1 * r^2` is below one in this example.
+4. Why is radial distortion zero at the principal point and generally larger
+   near image edges?
+   - Learner answer: `(0, 0)` stays `(0, 0)` after scaling.
+   - Review: at the normalized origin `r^2 = 0`, so the scale is one.
+     Farther from the origin, `r^2` grows and the distortion displacement
+     generally grows too. Distortion acts around the principal point in
+     normalized coordinates, not around pixel `(0, 0)`.
+
+### M2 checkpoint: reviewed concept map
+
+These review notes connect the earlier exercise answers; they do not replace
+the calculation and observed results recorded above.
+
+- Forward path: a board/world point is mapped into the camera frame by an
+  **extrinsic** transform, divided by its positive camera-frame depth to get
+  normalized coordinates, optionally distorted there, then mapped to pixels
+  by the **intrinsic** parameters `(fx, fy, cx, cy)`.
+- Back-projection reverses the ideal intrinsic mapping to produce a ray. A
+  pixel alone does not determine distance; supplying z-depth selects one 3D
+  point on that ray. Radial distortion would require its own inverse step.
+- For first-order radial distortion, `r^2 = x_n^2 + y_n^2` and
+  `scale = 1 + k1 * r^2`. With the exercise's negative `k1`, the tested point
+  moves toward the principal point; the normalized origin stays fixed.
+- A reprojection residual is `predicted - observed` in pixels. The RMSE
+  summarizes pixel disagreement, whereas parameter and pose errors compare
+  estimated values with known synthetic truth. Low RMSE alone is not proof
+  that the recovered camera is accurate: the weak-pose A/B experiment had a
+  slightly lower RMS but substantially worse focal-length and pose errors.
+- The next useful habit is to trace one quantity through the relevant header,
+  demo, and test, rather than memorizing every source file.

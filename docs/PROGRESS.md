@@ -36,7 +36,116 @@ Status: **complete on 2026-09-18**
 - `[x]` M1.4 matrix/angle-axis/quaternion equivalence verified.
 - `[x]` M1.5 reflection completed and learner answers reviewed.
 
+## Current milestone: M2
+
+Status: **in progress from 2026-09-18**
+
+- `[x]` M2 step-by-step plan and initial camera convention documented.
+- `[x]` M2.0 projection reasoning completed and reviewed.
+- `[x]` M2.1 minimal pinhole projection API built and verified on the hand-calculated example.
+- `[x]` M2.2 projection and invalid-input tests plus mutation check completed.
+- `[x]` M2.3 back-projection, z-depth reasoning, and round-trip tests completed.
+- `[x]` M2.4 intrinsic/extrinsic matrix equivalence, frame composition, and
+  direction mutation completed.
+- `[x]` M2.5 radial-distortion model, demo, tests, and sign mutation verified.
+- `[x]` M2.6 reprojection-error utilities, OpenCV projection comparison,
+  six-view synthetic correspondence generation, parameter/pose recovery, and
+  a controlled strong-versus-weak pose calibration comparison verified.
+
 ## Evidence log
+
+### 2026-09-23 — M2.5 and M2.6 evidence
+
+- Changing the radial test's `k_1` from `-0.2` to `0.2` caused the intended
+  `known radial-distortion result was incorrect` failure. Restoring `-0.2`
+  returned the targeted test and the full 7/7 CTest run to passing.
+- `reprojection_error_test` covers known residual `(-3, 4)`, error `5 px`,
+  two-point RMSE `sqrt(15) px`, empty input, and mismatched point counts.
+  The world-to-camera demo produced pixel `(360, 282)` and residual `(-3, 4)`
+  against observed pixel `(363, 278)`, with error `5 px`.
+- Ubuntu WSL OpenCV 4.6.0 was found. `opencv_projection_check` built and ran:
+  the hand-calculated, Eigen, and OpenCV paths all projected
+  `p_C = (1, 0, 2)` with `k_1 = -0.2` to pixel `(510, 240)`.
+  Its two errors against the known pixel were `0 px`.
+- A fresh full build and CTest run passed 8/8 tests after adding the OpenCV
+  comparison target. Multi-view calibration had not yet been implemented at
+  that stage.
+- A 7-by-6 planar inner-corner grid with 0.04 m spacing produced 42 points per
+  view. Six distinct board poses generated 252 matching 3D/2D pairs; every
+  corner had positive camera-frame depth and projected inside the 640-by-480
+  image. The first pixel in view 0 matched the independently hand-calculated
+  `(260.4575, 187.9003125)` within 0.001 px. The synthetic demo built and ran,
+  and the full CTest suite passed 8/8. Parameter estimation had not yet been run
+  at that stage.
+- OpenCV calibration of those 252 correspondences recovered intrinsics within
+  `0.0001 px` and `k_1` within `4.2e-7` of the synthetic truth. Recomputed
+  reprojection RMS matched OpenCV's `9.81443e-06 px` at displayed precision.
+  Comparing each estimated board-to-camera pose with its generating pose gave
+  rotation errors from `9.11207e-06` to `2.61297e-05` degrees and translation
+  errors from `2.03455e-07` to `3.4921e-07` metres. The demo built and ran in
+  Ubuntu WSL; the existing CTest suite passed 8/8. The demo is not yet a CTest
+  target, and weak/degenerate data have not been examined.
+- The strong-pose baseline now adds deterministic uniform pixel perturbations
+  bounded by `+/-0.2 px` independently in `u` and `v`, using seed `20260923`.
+  The ideal first-point hand check still runs before perturbation. Calibration
+  on the perturbed correspondences returned `0.156565 px` reprojection RMS,
+  `f_x` error `-3.27441 px`, and `f_y` error `-3.33981 px`; the recomputed RMS
+  agreed within `2.8e-17 px`. The demo built and ran, and CTest passed 8/8.
+- In a paired weak-pose case, all six generating rotation vectors were scaled
+  by `0.01`; board points, translations, camera truth, image size, and each
+  corner's stored pixel perturbation were unchanged. The first observed pixel
+  in every view matched the strong-pose case, as expected for the board origin.
+  Weak-pose calibration returned RMS `0.154715 px` versus `0.156565 px` for the
+  strong-pose case, but absolute `f_x` error rose from `3.27441 px` to
+  `47.7667 px`. Weak-pose translation errors were `0.09566`–`0.144554 m`,
+  versus `0.00478962`–`0.00829375 m` for the strong-pose case. Thus a slightly
+  lower in-sample reprojection RMS did not imply more accurate recovered
+  parameters. A full WSL build and the existing CTest suite passed 8/8; this
+  demo itself is not yet registered as a CTest test.
+
+### 2026-09-18 — M2 ideal projection evidence
+
+- After configuring the new CMake target, `pinhole_projection_demo` built and
+  ran successfully.
+- For `p_C = (0.5, -0.2, 2.0)` and intrinsics
+  `(f_x, f_y, c_x, c_y) = (400, 420, 320, 240)`, the demo printed pixel
+  `(420, 198)`, matching the corrected hand calculation.
+- Scaling the point to `(1.5, -0.6, 6.0)` left the projected pixel unchanged at
+  `(420, 198)`, verifying ray-scale invariance in the demo.
+- Invalid-depth behavior was then covered by the automated test.
+- A full CTest run passed 4/4 tests, including `pinhole_projection_test`.
+  The new test verifies three known projections, ray-scale invariance, and
+  rejection of both zero and negative depth.
+- Mutation check: changing the known expected pixel from `(420, 198)` to
+  `(420, 199)` caused `pinhole_projection_test` to fail with
+  `known projection projected to the wrong pixel`, while the three earlier
+  tests still passed. The expected value was then restored to `(420, 198)`.
+- After restoration, two observed full CTest runs passed 4/4 tests.
+- `pinhole_projection_demo` then printed normalized ray
+  `(0.25, -0.1, 1)` and recovered the original point
+  `(0.5, -0.2, 2.0)` using its z-depth.
+- `pinhole_back_projection_test` verifies the known ray, known 3D point,
+  project/back-project round trip, and rejection of zero or negative z-depth.
+- The configure/build completed successfully and the full CTest run passed
+  5/5 tests.
+- The world-to-camera demo produced `p_C = (0.5, 0.5, 5)` and pixel
+  `(360, 282)` through both the scalar `project()` path and the homogeneous
+  `K * p_C` path.
+- `intrinsic_extrinsic_projection_test` passed, including the known extrinsic,
+  known pixel, matrix/scalar agreement, and inverse recovery checks. The full
+  CTest run passed 6/6 tests.
+- Frame-direction mutation: replacing `T_CW * p_W` with `T_WC * p_W` produced
+  the intended `T_CW produced the wrong camera-frame point` failure. A
+  subsequent transient edit state produced
+  `inverse extrinsic did not recover the world point`; its exact source diff
+  was not captured. Restoring
+  `p_C = T_CW * p_W` and `p_W = inverse(T_CW) * p_C` returned the targeted
+  test to passing.
+- The radial-distortion demo produced ideal normalized coordinate `(0.5, 0)`,
+  distorted normalized coordinate `(0.475, 0)`, ideal pixel `(520, 240)`, and
+  distorted pixel `(510, 240)` for `k_1 = -0.2`.
+- The new radial-distortion test and all six earlier tests passed; the observed
+  full CTest result was 7/7 passing.
 
 ### 2026-09-16 — Initial audit
 

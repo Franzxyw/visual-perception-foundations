@@ -35,6 +35,8 @@ project's code.
 
 ## M2 — Pinhole camera and calibration
 
+Status: **in progress from 2026-09-18**
+
 Implement projection/back-projection, intrinsics, distortion, and reprojection
 error. Validate numerically and visualize controlled examples.
 

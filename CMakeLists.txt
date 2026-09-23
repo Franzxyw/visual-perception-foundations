@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
+find_package(OpenCV 4 REQUIRED COMPONENTS core calib3d)
 
 add_library(visual_perception_core INTERFACE)
 target_include_directories(
@@ -31,6 +32,32 @@ add_executable(
 )
 target_link_libraries(rotation_representations_demo PRIVATE Eigen3::Eigen)
 
+add_executable(pinhole_projection_demo app/pinhole_projection_demo.cpp)
+target_link_libraries(pinhole_projection_demo PRIVATE visual_perception_core)
+
+add_executable(
+    world_to_camera_projection_demo
+    app/world_to_camera_projection_demo.cpp
+)
+target_link_libraries(
+    world_to_camera_projection_demo
+    PRIVATE visual_perception_core
+)
+
+add_executable(radial_distortion_demo app/radial_distortion_demo.cpp)
+target_link_libraries(radial_distortion_demo PRIVATE visual_perception_core)
+
+add_executable(opencv_projection_check app/opencv_projection_check.cpp)
+target_include_directories(opencv_projection_check PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(
+    opencv_projection_check
+    PRIVATE visual_perception_core ${OpenCV_LIBS}
+)
+
+add_executable(synthetic_calibration_demo app/synthetic_calibration_demo.cpp)
+target_include_directories(synthetic_calibration_demo PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(synthetic_calibration_demo PRIVATE ${OpenCV_LIBS})
+
 enable_testing()
 
 add_executable(transform_test tests/transform_test.cpp)
@@ -50,3 +77,41 @@ add_test(
     NAME rotation_representations_test
     COMMAND rotation_representations_test
 )
+
+add_executable(pinhole_projection_test tests/pinhole_projection_test.cpp)
+target_link_libraries(pinhole_projection_test PRIVATE visual_perception_core)
+add_test(NAME pinhole_projection_test COMMAND pinhole_projection_test)
+
+add_executable(
+    pinhole_back_projection_test
+    tests/pinhole_back_projection_test.cpp
+)
+target_link_libraries(
+    pinhole_back_projection_test
+    PRIVATE visual_perception_core
+)
+add_test(
+    NAME pinhole_back_projection_test
+    COMMAND pinhole_back_projection_test
+)
+
+add_executable(
+    intrinsic_extrinsic_projection_test
+    tests/intrinsic_extrinsic_projection_test.cpp
+)
+target_link_libraries(
+    intrinsic_extrinsic_projection_test
+    PRIVATE visual_perception_core
+)
+add_test(
+    NAME intrinsic_extrinsic_projection_test
+    COMMAND intrinsic_extrinsic_projection_test
+)
+
+add_executable(radial_distortion_test tests/radial_distortion_test.cpp)
+target_link_libraries(radial_distortion_test PRIVATE visual_perception_core)
+add_test(NAME radial_distortion_test COMMAND radial_distortion_test)
+
+add_executable(reprojection_error_test tests/reprojection_error_test.cpp)
+target_link_libraries(reprojection_error_test PRIVATE visual_perception_core)
+add_test(NAME reprojection_error_test COMMAND reprojection_error_test)
